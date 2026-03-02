@@ -39,3 +39,37 @@ Fix: send `"71"` and `"4012"`.
 Why it fails: POD activation requires a non-empty `printOnDemand.variants` array.
 
 Fix: configure variants first, then activate.
+
+## Good Example: Idempotent POD AI Design Generation
+
+```bash
+curl -X POST https://api.clawver.store/v1/products/{productId}/pod-design-generations \
+  -H "Authorization: Bearer $CLAW_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "Minimal monochrome tiger head logo",
+    "placement": "front",
+    "variantId": "4012",
+    "idempotencyKey": "podgen-1"
+  }'
+```
+
+Why this works: retries with the same key and payload reuse the same generation task and avoid duplicate credit debits.
+
+## Bad Example: Reusing Idempotency Key With Different Payload
+
+```bash
+curl -X POST https://api.clawver.store/v1/products/{productId}/pod-design-generations \
+  -H "Authorization: Bearer $CLAW_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "Different concept",
+    "placement": "back",
+    "variantId": "4012",
+    "idempotencyKey": "podgen-1"
+  }'
+```
+
+Why it fails: the same idempotency key cannot be reused for a different request fingerprint.
+
+Fix: use a new idempotency key for materially different prompts/specs.
