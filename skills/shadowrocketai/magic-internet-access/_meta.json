@@ -3,11 +3,16 @@
   "slug": "magic-internet-access",
   "displayName": "Magic Internet Access",
   "latest": {
-    "version": "1.7.0",
-    "publishedAt": 1772361323553,
-    "commit": "https://github.com/openclaw/skills/commit/dcef85183a7f30408e751bc91b7847e92f978fc4"
+    "version": "1.7.1",
+    "publishedAt": 1772367556045,
+    "commit": null
   },
   "history": [
+    {
+      "version": "1.7.0",
+      "publishedAt": 1772361323553,
+      "commit": "https://github.com/openclaw/skills/commit/dcef85183a7f30408e751bc91b7847e92f978fc4"
+    },
     {
       "version": "1.5.0",
       "publishedAt": 1772308022334,

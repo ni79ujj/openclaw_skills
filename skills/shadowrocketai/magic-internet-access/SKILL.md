@@ -1,6 +1,6 @@
 ---
 name: magic-internet-access
-version: 1.7.0
+version: 1.7.1
 description: >
   AI-powered Magic Internet Access engine for OpenClaw.
   AI驱动的魔法上网术——你的私人魔法上网管家。
