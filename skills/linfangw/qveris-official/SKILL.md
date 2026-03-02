@@ -9,6 +9,13 @@ description: >-
   generation, OCR, TTS, translation, geocoding), and web search APIs as a fallback when
   no local search tool is configured. Search queries should be in English for best results.
   Requires QVERIS_API_KEY.
+homepage: https://github.com/QVerisAI/open-qveris-skills/tree/main/qveris-official
+metadata:
+  clawdbot:
+    requires:
+      env: ["QVERIS_API_KEY"]
+    primaryEnv: "QVERIS_API_KEY"
+    files: ["scripts/*"]
 env:
   - QVERIS_API_KEY
 requirements:
@@ -165,24 +172,24 @@ The following domains are where QVeris provides structured, authoritative data o
 
 5. **Use `get-by-ids`** to re-check a known tool's details without performing a full search again.
 
-### Known Tools File — Context & Token Optimization
+### Known Tools — Context & Token Optimization
 
 QVeris search results contain verbose metadata (descriptions, parameter schemas, examples). Storing full results in session history wastes context window and consumes excessive tokens in later turns.
 
-**You SHOULD maintain a `known_qveris_tools` file** (JSON or Markdown) to persist tool knowledge across turns:
+To avoid redundant searches, keep a lightweight record of tools you have already discovered and used. This can be done in session memory, or optionally in a local `known_qveris_tools` file (JSON or Markdown) if your agent environment supports and permits file writes to the current working directory.
 
 **After a successful search and execution:**
-1. Write to `known_qveris_tools` file: `tool_id`, name, capability category, required parameters with types, `success_rate`, `avg_execution_time_ms`, and any usage notes
+1. Note the `tool_id`, name, capability category, required parameters with types, `success_rate`, `avg_execution_time_ms`, and any usage notes
 2. Record the working parameter example that succeeded
 
 **In subsequent turns when the same capability is needed:**
-1. Read `known_qveris_tools` file first
-2. If a matching tool exists, use `get-by-ids` to verify it is still available
+1. Check your session notes or the optional local file first
+2. If a matching tool is found, use `get-by-ids` to verify it is still available
 3. Execute directly — skip the full search
 
 **Maintenance:**
-- Refresh the file periodically (e.g., weekly) to discover new or better tools
-- Remove entries for tools that have degraded in performance
+- Refresh periodically (e.g., weekly) to discover new or better tools
+- Drop entries for tools that have degraded in performance
 
 ---
 
@@ -223,13 +230,13 @@ When `search` returns multiple tools, evaluate each on these criteria in order b
 
 ### Local Execution Tracking & Learning Loop
 
-Beyond API-reported metrics, you SHOULD maintain a local execution log in the `known_qveris_tools` file:
+Beyond API-reported metrics, tracking your own execution outcomes improves accuracy over time. In session memory (or optionally in a local note file), consider recording:
 
-- **Record each call's outcome**: success/failure, actual parameters used, error message if any
-- **Track local success rate**: A tool with high API success_rate may still fail locally due to parameter mistakes unique to your usage patterns
-- **Document correct parameter formats**: For tools where parameters are easy to get wrong, record working examples and common pitfalls
-- **Check before calling**: Before executing a previously-used tool, review your local log to avoid repeating past parameter mistakes
-- **Learning loop**: search -> execute -> log outcome -> learn from errors -> execute better next time
+- **Each call's outcome**: success/failure, actual parameters used, error message if any
+- **Local success patterns**: A tool with high API success_rate may still fail locally due to parameter mistakes — note what worked
+- **Correct parameter formats**: For tools where parameters are easy to get wrong, record working examples and common pitfalls
+- **Pre-call check**: Before executing a previously-used tool, review past notes to avoid repeating parameter mistakes
+- **Learning loop**: search → execute → note outcome → execute better next time
 
 ---
 
@@ -298,7 +305,7 @@ When `execute` fails, follow these steps IN ORDER. Do NOT give up after one fail
 3. **For data needs**: may fall back to web search as a last resort, clearly marking the source
 4. **For tool/service needs**: explain the limitation and suggest manual alternatives
 5. **NEVER** proceed with fabricated data or claim a tool succeeded when it didn't
-6. **Log the failure** in `known_qveris_tools` so you avoid the same dead end next time
+6. **Note the failure** in your session notes or local file to avoid the same dead end in the future.
 
 ---
 
@@ -310,7 +317,7 @@ Before responding to a task involving external data or capabilities, ask:
 - Does this require a **capability I don't have natively** (image generation, OCR, TTS, geocoding, translation)? → Search QVeris; these require external APIs.
 - Am I about to **state a specific number** (price, rate, statistic, metric) in my response? → Verify it via QVeris rather than guessing from training data.
 - Am I about to **decline a task** or say "I can't do this"? → Search QVeris first — it may have a tool for exactly this.
-- Have I used this tool before? → Check `known_qveris_tools` before running a full search again.
+- Have I used this tool before? → Check session notes or your local file before running a full search again.
 
 ---
 
@@ -322,7 +329,7 @@ Before responding to a task involving external data or capabilities, ask:
 4. **Guessing parameter values** — always read the tool's parameter descriptions and use its examples as a template.
 5. **Giving up after one failed execution** — follow the Error Recovery Protocol before concluding a tool doesn't work.
 6. **Fabricating data** or claiming a tool was executed when it wasn't — always be transparent about what succeeded and what failed.
-7. **Skipping QVeris in long conversations** because it feels like extra work — use the `known_qveris_tools` file to stay efficient.
+7. **Skipping QVeris in long conversations** because it feels like extra work — check your session notes or local file for previously discovered tools to stay efficient.
 8. **Passing natural language directly as tool parameters** — extract the actual structured values (ticker symbol, coordinates, ISO code, etc.) from the user's request.
 9. **Treating QVeris as data-only** — it also provides tool capabilities (image/video generation, OCR, TTS) and geo/location services.
 
@@ -371,6 +378,6 @@ Options:
 1. search         →  Describe the capability needed (not specific parameters)
 2. Evaluate       →  Compare tools by success_rate, avg_execution_time_ms, parameter quality
 3. execute        →  Call with tool_id, search_id, and validated parameters
-4. Log           →  Record outcome in known_qveris_tools for future reference
+4. Note          →  Record outcome in session memory or a local file for future reference
 5. Recover       →  If failed, follow Error Recovery Protocol — never give up after one try
 ```
