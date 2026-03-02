@@ -36,6 +36,14 @@ Rewrite examples:
 - temporary duration too long
 - production change without explicit human confirmation
 
+## Environment + state path
+
+This package reads state-path configuration from:
+- `CONSENSUS_STATE_FILE`
+- `CONSENSUS_STATE_ROOT`
+
+Use a dedicated non-privileged directory for state; do not point state paths at system or secrets directories.
+
 ## Quick start
 
 ```bash

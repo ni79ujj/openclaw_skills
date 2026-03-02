@@ -1,8 +1,10 @@
 ---
 name: consensus-permission-escalation-guard
 description: Pre-execution governance for IAM and permission escalation changes. Use when an agent or workflow proposes granting, expanding, or assuming higher privileges and you need deterministic ALLOW/BLOCK/REQUIRE_REWRITE decisions with strict schema validation, idempotency, and board-native audit artifacts.
-metadata:
-  {"openclaw": {"requires": {"bins": ["node", "tsx"], "env": ["CONSENSUS_STATE_FILE", "CONSENSUS_STATE_ROOT"]}}}
+homepage: https://github.com/kaicianflone/consensus-permission-escalation-guard
+source: https://github.com/kaicianflone/consensus-permission-escalation-guard
+upstream:
+  consensus-guard-core: https://github.com/kaicianflone/consensus-guard-core
 ---
 
 # consensus-permission-escalation-guard
@@ -46,21 +48,10 @@ Modes:
 - `mode="persona"` (default): uses local deterministic persona defaults for internal voting
 - `mode="external_agent"`: consume `external_votes[]`, then aggregate and enforce policy deterministically
 
-## Install assumptions
-
-This repository currently expects a local sibling checkout of `consensus-guard-core`.
+## Install
 
 ```bash
-# from repos/ directory
-# repos/
-#   consensus-guard-core/
-#   consensus-permission-escalation-guard/
-```
-
-Then install dependencies in this repo:
-
-```bash
-npm i
+npm i consensus-permission-escalation-guard
 ```
 
 ## Quick start
@@ -78,3 +69,5 @@ npm test
 Test coverage includes schema rejection, hard-block paths, rewrite paths, allow paths, idempotent retries, and external-agent aggregation behavior.
 
 Note: this skill depends on `consensus-guard-core` for aggregation/state helpers; review that package alongside this one for full runtime auditability.
+
+See also: `SECURITY-ASSURANCE.md` for threat model, runtime boundaries, and deployment hardening guidance.
