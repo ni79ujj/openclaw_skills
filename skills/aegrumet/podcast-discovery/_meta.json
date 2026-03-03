@@ -1,0 +1,11 @@
+{
+  "owner": "aegrumet",
+  "slug": "podcast-discovery",
+  "displayName": "Podcast Discovery",
+  "latest": {
+    "version": "0.0.4",
+    "publishedAt": 1772431423692,
+    "commit": null
+  },
+  "history": []
+}
