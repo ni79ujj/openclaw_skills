@@ -1,0 +1,11 @@
+{
+  "owner": "xlbbb-cn",
+  "slug": "smtp-sender",
+  "displayName": "smtp-sender",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1772283740104,
+    "commit": null
+  },
+  "history": []
+}
