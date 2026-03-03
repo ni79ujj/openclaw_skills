@@ -1,0 +1,11 @@
+{
+  "owner": "vswarm-ai",
+  "slug": "token-profiler",
+  "displayName": "Token Profiler",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1772432531680,
+    "commit": null
+  },
+  "history": []
+}
