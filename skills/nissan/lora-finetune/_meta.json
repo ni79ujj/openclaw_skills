@@ -1,0 +1,11 @@
+{
+  "owner": "nissan",
+  "slug": "lora-finetune",
+  "displayName": "Lora Finetune",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1772393331848,
+    "commit": null
+  },
+  "history": []
+}
