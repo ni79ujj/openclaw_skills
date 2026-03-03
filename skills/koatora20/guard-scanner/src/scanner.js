@@ -31,7 +31,7 @@ const { KNOWN_MALICIOUS } = require('./ioc-db.js');
 const { generateHTML } = require('./html-template.js');
 
 // ===== CONFIGURATION =====
-const VERSION = '4.0.1';
+const VERSION = '5.0.3';
 
 const THRESHOLDS = {
     normal: { suspicious: 30, malicious: 80 },
@@ -226,6 +226,7 @@ class GuardScanner {
             if (relFile.includes('node_modules/') || relFile.includes('node_modules\\')) continue;
             if (relFile.startsWith('.git/') || relFile.startsWith('.git\\')) continue;
             if (BINARY_EXTENSIONS.has(ext)) continue;
+            if (this.isSelfNoisePath(skillName, relFile)) continue;
 
             let content;
             try { content = fs.readFileSync(file, 'utf-8'); } catch { continue; }
@@ -234,7 +235,9 @@ class GuardScanner {
             const fileType = this.classifyFile(ext, relFile);
 
             // IoC checks
-            this.checkIoCs(content, relFile, skillFindings);
+            if (!this.isSelfThreatCorpus(skillName, relFile)) {
+                this.checkIoCs(content, relFile, skillFindings);
+            }
 
             // Pattern checks (context-aware)
             this.checkPatterns(content, relFile, fileType, skillFindings);
@@ -323,6 +326,21 @@ class GuardScanner {
         const base = path.basename(relFile).toLowerCase();
         if (base === 'skill.md' || base === 'readme.md') return 'skill-doc';
         return 'other';
+    }
+
+    isSelfNoisePath(skillName, relFile) {
+        if (skillName !== 'guard-scanner') return false;
+        return /^test\//.test(relFile)
+            || /^dist\/__tests__\//.test(relFile)
+            || /^ts-src\/__tests__\//.test(relFile)
+            || /^docs\//.test(relFile)
+            || relFile === 'ROADMAP-RESEARCH.md'
+            || relFile === 'CHANGELOG.md';
+    }
+
+    isSelfThreatCorpus(skillName, relFile) {
+        if (skillName !== 'guard-scanner') return false;
+        return /(^|\/)(ioc-db|patterns)\.(js|ts)$/.test(relFile);
     }
 
     checkIoCs(content, relFile, findings) {

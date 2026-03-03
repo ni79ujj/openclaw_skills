@@ -216,51 +216,12 @@ function logAudit(entry: Record<string, unknown>): void {
 
 type GuardMode = "monitor" | "enforce" | "strict";
 
-const SUITE_TOKEN_FILE = join(homedir(), ".openclaw", "guava-suite", "token.jwt");
-
-/**
- * Check if GuavaSuite JWT exists and hasn't expired.
- * Why: Lightweight check without jsonwebtoken dependency — just decode base64 payload.
- * Full JWT signature verification happens at activation time in activate.js.
- */
-function isSuiteActive(): boolean {
-    try {
-        const token = readFileSync(SUITE_TOKEN_FILE, "utf8").trim();
-        if (!token) return false;
-
-        // Decode JWT payload (base64url → JSON)
-        const parts = token.split(".");
-        if (parts.length !== 3) return false;
-
-        const payload = JSON.parse(
-            Buffer.from(parts[1], "base64url").toString("utf8")
-        );
-
-        // Check expiry
-        if (payload.exp && payload.exp * 1000 < Date.now()) return false;
-
-        // Check scope
-        return payload.scope === "suite";
-    } catch {
-        return false;
-    }
-}
-
 function loadMode(): GuardMode {
-    // Priority 1: GuavaSuite JWT token → strict
-    if (isSuiteActive()) {
-        return "strict";
-    }
 
     // Priority 2: explicit config in openclaw.json
     try {
         const configPath = join(homedir(), ".openclaw", "openclaw.json");
         const config = JSON.parse(readFileSync(configPath, "utf8"));
-
-        // Check suiteEnabled flag (set by activate.js)
-        if (config?.plugins?.["guard-scanner"]?.suiteEnabled === true) {
-            return "strict";
-        }
 
         const mode = config?.plugins?.["guard-scanner"]?.mode;
         if (mode === "monitor" || mode === "enforce" || mode === "strict") {
