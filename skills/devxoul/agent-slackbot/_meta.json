@@ -1,0 +1,11 @@
+{
+  "owner": "devxoul",
+  "slug": "agent-slackbot",
+  "displayName": "Agent Slackbot",
+  "latest": {
+    "version": "1.8.1",
+    "publishedAt": 1772601726049,
+    "commit": null
+  },
+  "history": []
+}
