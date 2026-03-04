@@ -1,13 +1,18 @@
 {
   "owner": "pushmatrix",
   "slug": "shop-product-search",
-  "displayName": "Shop Product Search",
+  "displayName": "Shop",
   "latest": {
-    "version": "0.0.7",
-    "publishedAt": 1772497879176,
-    "commit": "https://github.com/openclaw/skills/commit/86c917bb2eb79a1c6f2c9e146a42181402dd1fe6"
+    "version": "0.0.9",
+    "publishedAt": 1772641630575,
+    "commit": null
   },
   "history": [
+    {
+      "version": "0.0.7",
+      "publishedAt": 1772497879176,
+      "commit": "https://github.com/openclaw/skills/commit/86c917bb2eb79a1c6f2c9e146a42181402dd1fe6"
+    },
     {
       "version": "0.0.5",
       "publishedAt": 1772475107119,
