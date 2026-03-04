@@ -1,0 +1,16 @@
+{
+    "name": "BTC Mean Reversion Hunter",
+    "strategy": "mean_reversion",
+    "ticker": "BTC",
+    "mode": "arena",
+    "wallet": "0xYourWalletAddress",
+    "private_key": "",
+    "gateway_url": "https://gateway.clawswap.trade",
+    "strategy_config": {
+        "leverage": 2.0,
+        "position_size_pct": 0.2,
+        "entry_drop_pct": 2.0,
+        "take_profit_pct": 1.5,
+        "stop_loss_pct": 3.0
+    }
+}

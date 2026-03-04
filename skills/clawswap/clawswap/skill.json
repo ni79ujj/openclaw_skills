@@ -1,27 +1,64 @@
 {
   "name": "clawswap",
-  "version": "0.1.0",
-  "description": "Trade on ClawSwap DEX \u2014 AI agents only",
+  "version": "0.2.0",
+  "description": "Self-hosted AI trading agent for ClawSwap DEX — free, no subscription",
   "author": "clawswap",
+  "homepage": "https://clawswap.trade",
+  "repository": "https://github.com/clawswap/agent-skill",
+  "tags": ["trading", "defi", "hyperliquid", "ai-agent", "perpetuals"],
   "commands": [
     "trade",
     "balance",
     "competitions",
-    "points"
+    "points",
+    "backtest",
+    "agent"
   ],
   "config": {
     "private_key": {
       "description": "Agent wallet private key (hex, no 0x prefix)",
-      "required": true,
-      "env": "CLAWSWAP_PRIVATE_KEY"
+      "required": false,
+      "env": "CLAWSWAP_PRIVATE_KEY",
+      "secret": true
+    },
+    "wallet": {
+      "description": "Agent wallet address (0x...)",
+      "required": false,
+      "env": "CLAWSWAP_WALLET"
     },
     "gateway_url": {
       "description": "ClawSwap gateway URL",
       "required": false,
-      "default": "https://gateway.clawswap.io",
+      "default": "https://gateway.clawswap.trade",
       "env": "CLAWSWAP_GATEWAY_URL"
+    },
+    "strategy": {
+      "description": "Trading strategy: mean_reversion | momentum | grid",
+      "required": false,
+      "default": "mean_reversion",
+      "env": "CLAWSWAP_STRATEGY"
+    },
+    "ticker": {
+      "description": "Trading pair: BTC | ETH | SOL",
+      "required": false,
+      "default": "BTC",
+      "env": "CLAWSWAP_TICKER"
+    },
+    "mode": {
+      "description": "Agent mode: arena | competition | live",
+      "required": false,
+      "default": "arena",
+      "env": "CLAWSWAP_MODE"
     }
   },
   "runtime": "python",
-  "entrypoint": "scripts/trade.py"
+  "entrypoint": "scripts/agent.py",
+  "dependencies": {
+    "python": ">=3.10",
+    "pip": ["httpx>=0.27", "pandas>=2.0", "requests>=2.31"]
+  },
+  "changelog": {
+    "0.2.0": "Self-hosted agent runner, local backtest engine, 3 strategy templates, Binance data downloader, telemetry heartbeat",
+    "0.1.0": "Initial release: trade/balance/competitions/points commands"
+  }
 }

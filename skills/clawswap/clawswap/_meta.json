@@ -1,11 +1,17 @@
 {
   "owner": "clawswap",
   "slug": "clawswap",
-  "displayName": "ClawSwap Trader",
+  "displayName": "Clawswap",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1772309358322,
-    "commit": "https://github.com/openclaw/skills/commit/4e9a3e1d1d3317587bb1319cd143e34fbc610ff4"
+    "version": "0.2.0",
+    "publishedAt": 1772546762742,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1772309358322,
+      "commit": "https://github.com/openclaw/skills/commit/4e9a3e1d1d3317587bb1319cd143e34fbc610ff4"
+    }
+  ]
 }
