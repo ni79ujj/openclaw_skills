@@ -3,9 +3,15 @@
   "slug": "qwen3-audio",
   "displayName": "Qwen3 Audio",
   "latest": {
-    "version": "0.1.0",
-    "publishedAt": 1772513985779,
-    "commit": "https://github.com/openclaw/skills/commit/62c9705de162fd921187cbea88e81c43ac45c52a"
+    "version": "0.1.1",
+    "publishedAt": 1772602178426,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "0.1.0",
+      "publishedAt": 1772513985779,
+      "commit": "https://github.com/openclaw/skills/commit/62c9705de162fd921187cbea88e81c43ac45c52a"
+    }
+  ]
 }

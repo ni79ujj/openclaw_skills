@@ -466,7 +466,7 @@ def get_voices_dir() -> str:
     return voices_dir
 
 def get_voice_path(voice_id: str) -> dict | None:
-    """Get voice file paths by voice_id. Returns dict with ref_audio and ref_text, or None if not found."""
+    """Get voice file paths by voice_id. Returns dict with ref_audio, ref_text and instruct, or None if not found."""
     voices_dir = get_voices_dir()
     voice_dir = os.path.join(voices_dir, voice_id)
     if not os.path.isdir(voice_dir):
@@ -474,6 +474,7 @@ def get_voice_path(voice_id: str) -> dict | None:
 
     ref_audio = os.path.join(voice_dir, "ref_audio.wav")
     ref_text_path = os.path.join(voice_dir, "ref_text.txt")
+    instruct_path = os.path.join(voice_dir, "ref_instruct.txt")
 
     if not os.path.exists(ref_audio):
         return None
@@ -483,9 +484,15 @@ def get_voice_path(voice_id: str) -> dict | None:
         with open(ref_text_path, "r", encoding="utf-8") as f:
             ref_text = f.read().strip()
 
+    instruct = ""
+    if os.path.exists(instruct_path):
+        with open(instruct_path, "r", encoding="utf-8") as f:
+            instruct = f.read().strip()
+
     return {
         "ref_audio": ref_audio,
-        "ref_text": ref_text
+        "ref_text": ref_text,
+        "instruct": instruct
     }
 
 def run_voice_create(args: argparse.Namespace) -> None:
@@ -497,37 +504,25 @@ def run_voice_create(args: argparse.Namespace) -> None:
 
     # Normalize text: replace newlines with spaces
     text = _normalize_text(args.text)
+    instruct = _normalize_text(args.instruct) if args.instruct else None
+
+    if not instruct:
+        raise ValueError("--instruct 参数是必需的，请提供语音风格描述")
 
     # Generate audio using TTS
     output_audio = os.path.join(voice_dir, "ref_audio.wav")
 
-    # Create a namespace for TTS
-    tts_args = argparse.Namespace(
-        text=text,
-        output=output_audio,
-        model=args.model,
-        voice=args.voice,
-        language=args.language,
-        speaker=getattr(args, 'speaker', 'Vivian'),
-        ref_audio=None,
-        ref_text=None,
-        instruct=getattr(args, 'instruct', None),
-    )
-
-    # Run TTS to generate the audio
+    # Run TTS to generate the audio (always use VoiceDesign model for voice creation)
     _ensure_mlx_audio()
     from mlx_audio.tts.utils import load_model as load_tts_model
 
-    model = load_tts_model(DEFAULT_VOICEDESIGN_MODEL if tts_args.instruct else tts_args.model)
+    model = load_tts_model(DEFAULT_VOICEDESIGN_MODEL)
 
     kwargs = {
-        "text": tts_args.text,
-        "language": tts_args.language,
+        "text": text,
+        "language": args.language,
+        "instruct": instruct,
     }
-    if tts_args.voice:
-        kwargs["voice"] = tts_args.voice
-    if tts_args.instruct:
-        kwargs["instruct"] = tts_args.instruct
 
     results = list(model.generate(**kwargs))
     if not results:
@@ -543,6 +538,11 @@ def run_voice_create(args: argparse.Namespace) -> None:
     with open(ref_text_path, "w", encoding="utf-8") as f:
         f.write(text)
 
+    # Save instruct
+    instruct_path = os.path.join(voice_dir, "ref_instruct.txt")
+    with open(instruct_path, "w", encoding="utf-8") as f:
+        f.write(instruct)
+
     # Calculate duration
     duration = len(audio) / sample_rate
 
@@ -551,6 +551,7 @@ def run_voice_create(args: argparse.Namespace) -> None:
         "id": voice_id,
         "ref_audio": output_audio,
         "ref_text": text,
+        "instruct": instruct,
         "duration": round(duration, 3),
         "sample_rate": sample_rate
     }
@@ -567,11 +568,17 @@ def run_voice_list(args: argparse.Namespace) -> None:
             if os.path.isdir(voice_dir):
                 ref_audio = os.path.join(voice_dir, "ref_audio.wav")
                 ref_text_path = os.path.join(voice_dir, "ref_text.txt")
+                instruct_path = os.path.join(voice_dir, "ref_instruct.txt")
 
                 ref_text = ""
                 if os.path.exists(ref_text_path):
                     with open(ref_text_path, "r", encoding="utf-8") as f:
                         ref_text = f.read().strip()
+
+                instruct = ""
+                if os.path.exists(instruct_path):
+                    with open(instruct_path, "r", encoding="utf-8") as f:
+                        instruct = f.read().strip()
 
                 if os.path.exists(ref_audio):
                     # Get audio info
@@ -582,6 +589,7 @@ def run_voice_list(args: argparse.Namespace) -> None:
                         "id": voice_id,
                         "ref_audio": ref_audio,
                         "ref_text": ref_text,
+                        "instruct": instruct,
                         "duration": round(duration, 3),
                         "sample_rate": sr
                     })
@@ -650,11 +658,9 @@ def build_parser() -> argparse.ArgumentParser:
     # voice create
     voice_create = voice_subparsers.add_parser("create", help="Create a new voice")
     voice_create.add_argument("--text", required=True, help="参考文本")
+    voice_create.add_argument("--instruct", required=True, help="语音风格描述（必需，用于VoiceDesign模型）")
     voice_create.add_argument("--id", help="音色ID (可选，默认自动生成)")
-    voice_create.add_argument("--model", default=DEFAULT_TTS_MODEL, help="TTS 模型")
-    voice_create.add_argument("--voice", default="Chelsie", help="TTS 语音角色")
     voice_create.add_argument("--language", default="English", help="TTS 语言")
-    voice_create.add_argument("--instruct", default=None, help="语音风格指令（用于VoiceDesign模型）")
     voice_create.set_defaults(func=run_voice_create)
 
     # voice list

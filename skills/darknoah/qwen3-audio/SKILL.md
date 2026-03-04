@@ -84,11 +84,12 @@ output-format: "txt" | "ass" | "srt" | "all"
 Voices are stored in the `voices/` directory at the skill root level. Each voice has its own folder containing:
 - `ref_audio.wav` - Reference audio file
 - `ref_text.txt` - Reference text transcript
+- `ref_instruct.txt` - Voice style description
 
 #### Create a Voice
-Create a reusable voice profile that can be used for voice cloning:
+Create a reusable voice profile using VoiceDesign model. The `--instruct` parameter is required to describe the voice style:
 ```bash
-uv run --python ".venv/bin/python" "./scripts/mlx-audio.py" voice create --text "This is a sample voice reference text." --language "English"
+uv run --python ".venv/bin/python" "./scripts/mlx-audio.py" voice create --text "This is a sample voice reference text." --instruct "A warm, friendly female voice with a professional tone." --language "English"
 ```
 Optional: `--id "my-voice-id"` to specify a custom voice ID.
 
@@ -98,6 +99,7 @@ Optional: `--id "my-voice-id"` to specify a custom voice ID.
   "id": "abc12345",
   "ref_audio": "/path/to/skill/voices/abc12345/ref_audio.wav",
   "ref_text": "This is a sample voice reference text.",
+  "instruct": "A warm, friendly female voice with a professional tone.",
   "duration": 3.456,
   "sample_rate": 24000
 }
@@ -116,6 +118,7 @@ uv run --python ".venv/bin/python" "./scripts/mlx-audio.py" voice list
     "id": "abc12345",
     "ref_audio": "/path/to/skill/voices/abc12345/ref_audio.wav",
     "ref_text": "This is a sample voice reference text.",
+    "instruct": "A warm, friendly female voice with a professional tone.",
     "duration": 3.456,
     "sample_rate": 24000
   }
@@ -123,7 +126,7 @@ uv run --python ".venv/bin/python" "./scripts/mlx-audio.py" voice list
 ```
 
 #### Use a Created Voice
-After creating a voice, use it for TTS with the `--ref_voice` parameter:
+After creating a voice, use it for TTS with the `--ref_voice` parameter. The instruct will be automatically loaded:
 ```bash
 uv run --python ".venv/bin/python" "./scripts/mlx-audio.py" tts --text "New text to speak" --output "/output.wav" --ref_voice "abc12345"
 ```
