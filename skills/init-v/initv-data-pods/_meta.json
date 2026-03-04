@@ -1,0 +1,11 @@
+{
+  "owner": "init-v",
+  "slug": "initv-data-pods",
+  "displayName": "data-pods",
+  "latest": {
+    "version": "0.2.0",
+    "publishedAt": 1772621337004,
+    "commit": null
+  },
+  "history": []
+}
