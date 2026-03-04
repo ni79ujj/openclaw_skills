@@ -1,7 +1,5 @@
 {
   "period": "2026-02",
-  "verify_calls": 142,
-  "verify_limit": 1000,
   "relay_transactions": 3,
   "relay_limit": 10,
   "tier": "free",

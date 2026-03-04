@@ -19,10 +19,10 @@ metadata:
 
 # Vouch CLI
 
-Vouch provides verifiable identity for AI agents on Base. Agents register an account, create an identity wallet, link social accounts (X, GitHub, or DNS), and delegate short-lived runtime keys. Messages are signed as EIP-712 envelopes and verified against the VouchHub smart contract via a subgraph index.
+Vouch provides verifiable identity for AI agents on Base. Agents create an identity wallet, connect a social account (X or GitHub) to create their API account, optionally link additional identities (including DNS), and delegate short-lived runtime keys. Messages are signed as EIP-712 envelopes and verified against the VouchHub smart contract via direct RPC reads.
 
 ```
-Account (email + API key) ──manages──> Wallet (identity)
+Account (OAuth + API key) ──manages──> Wallet (identity)
                                             │
        ┌────────────────────────────────────┤
        ▼                                    ▼
@@ -30,7 +30,7 @@ Account (email + API key) ──manages──> Wallet (identity)
   (X, GitHub, DNS)                         │
                                            └──sign──> Envelope (EIP-712)
                                                            │
-                              Recipient ──verify──> Subgraph
+                              Recipient ──verify──> VouchHub (RPC)
                                                            │
                                                     ✓ signer → wallet → linked identities
 ```
@@ -53,11 +53,17 @@ Verify: `vouch --version`
 
 ### Full setup wizard
 
-`vouch init` walks through complete onboarding: register an account, generate a wallet, link a social identity, and delegate a runtime key.
+`vouch init` walks through complete onboarding: generate a wallet, connect a social account (X or GitHub) which creates your API account and links your identity, then delegate a runtime key.
 
 ```bash
 vouch init
 ```
+
+The init flow:
+1. **Generate wallet** — creates a new identity keypair stored locally at `~/.vouch/keys/`
+2. **Save config** — writes `~/.vouch/config.toml` with network defaults
+3. **Connect account** — opens browser for X or GitHub OAuth, which creates your API account (provides API key) and links your identity on-chain
+4. **Delegate runtime key** — creates a 24-hour signing key for your agent
 
 Re-initialize an existing setup:
 
@@ -66,26 +72,6 @@ vouch init --force
 ```
 
 This is the recommended first command. It handles everything needed to start signing and verifying messages.
-
-### Register an account
-
-Create an account and get an API key (standalone, for CI/scripting):
-
-```bash
-vouch --json register --email agent@example.com
-```
-
-**Output:**
-
-```json
-{
-  "account_id": "uuid-...",
-  "api_key": "vk_...",
-  "tier": "free"
-}
-```
-
-**Flags:** `--email <address>` (required)
 
 ### Log in on a new machine
 
@@ -133,6 +119,8 @@ vouch --json link-github --wallet-key 0xKEY --attestation '{"provider":2,...}'
 
 ### Link a domain via DNS
 
+Link a domain to your wallet. Requires an existing API account (created via `vouch init`), since DNS alone cannot verify user identity for account creation.
+
 Interactive mode requests a DNS challenge, shows the TXT record to add, then verifies:
 
 ```bash
@@ -154,26 +142,6 @@ vouch --json revoke-link --wallet-key 0xKEY --provider x
 ```
 
 **Flags:** `--wallet-key <hex>` (required), `--provider <x|github|dns>` (required)
-
-### Refresh cached X handle
-
-```bash
-vouch --json refresh-handle
-```
-
-**Flags:** `--wallet <address>` (optional, defaults to config)
-
-**Output:**
-
-```json
-{
-  "wallet": "0x...",
-  "old_handle": "old_name",
-  "new_handle": "new_name",
-  "changed": true,
-  "updated_at": "2026-02-23T12:00:00Z"
-}
-```
 
 ## Sign outbound messages
 
@@ -485,8 +453,6 @@ vouch --json account
 ```json
 {
   "period": "2026-02",
-  "verify_calls": 142,
-  "verify_limit": 1000,
   "relay_transactions": 3,
   "relay_limit": 10,
   "tier": "free"
@@ -509,7 +475,7 @@ vouch --json account billing
 
 | | Free | Paid (usage-based) |
 |---|---|---|
-| Verify calls | 1,000/month | $0.0025 each |
+| Verify calls | Unlimited | Free |
 | Relay transactions | 10/month | $0.05 each |
 
 Manage billing at https://vouch.directory/dashboard/billing or upgrade via the dashboard.
@@ -573,7 +539,7 @@ done < envelopes.jsonl
 **Check usage before heavy operations:**
 
 ```bash
-vouch --json account | jq '{verify_calls, verify_limit, tier}'
+vouch --json account | jq '{relay_transactions, relay_limit, tier}'
 ```
 
 **Find agents by capability:**
@@ -594,6 +560,30 @@ vouch link-github
 SIGNED=$(vouch --json sign --payload '{"task":"deploy","id":"cr-42"}')
 echo "$SIGNED" | curl -s -X POST -H "Content-Type: application/json" -d @- https://recipient.example.com/inbox
 ```
+
+## Reset
+
+Teardown the current identity and reinitialize from scratch:
+
+```bash
+vouch reset
+```
+
+Interactive mode revokes onchain identity, deletes `~/.vouch/`, then runs the full init flow (requires browser for OAuth). Requires typing `RESET` to confirm.
+
+Skip onchain revocation:
+
+```bash
+vouch reset --force
+```
+
+Pipe mode (teardown only — reinit requires browser):
+
+```bash
+vouch --json reset --wallet-key 0xKEY
+```
+
+**Flags:** `--wallet-key <hex>` (enables pipe mode, teardown only), `--force` (skip onchain revocation)
 
 ## Teardown
 

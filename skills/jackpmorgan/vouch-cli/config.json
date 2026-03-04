@@ -3,7 +3,6 @@
   "default_flags": ["--json"],
   "allowed_commands": [
     "init",
-    "register",
     "login",
     "account",
     "link-x",
@@ -22,7 +21,7 @@
     "allowlist",
     "revoke-key",
     "revoke-link",
-    "refresh-handle",
+    "reset",
     "teardown"
   ]
 }
