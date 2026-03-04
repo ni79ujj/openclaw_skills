@@ -1,399 +1,403 @@
 ---
 name: memory-master
-version: 1.0.0
-description: "精准记忆系统 — 将你的AI助手从"金鱼脑"进化为"过目不忘"。采用标签索引+双向同步，实现零成本、毫秒级精准召回。无需API，无需向量嵌入，真正的记忆架构革命。"
-author: YourName
-tags: [memory, 记忆, 索引, 上下文, 优化]
+version: 2.5.3
+description: "本地记忆系统，结构化索引+自动学习。自动写记忆，启发式召回，知识不足时自动网络学习。兼容 self-improving-agent：自动记录 skill 完成和错误到知识库。"
+author: 李哲龙
+tags: [memory, 记忆, 索引, 上下文]
 ---
 
-# 🧠 记忆大师 — 精准记忆系统
+# 🧠 Memory Master — The Precision Memory System
 
-*让你的AI助手从"金鱼脑"进化为"过目不忘"*
-
----
-
-## 痛点
-
-现在的AI助手都有"失忆症"：
-
-- ❌ 记不住昨天聊了什么
-- ❌ 加载整个记忆文件，疯狂消耗Token
-- ❌ 模糊搜索返回一堆不相关内容
-- ❌ 没有结构，就是一堆原始文本
-
-**你值得更好的。**
+*Transform your AI agent from forgetful to photographic.*
 
 ---
 
-## 解决方案：记忆大师
+## The Problem
 
-一个**零成本、精准定位的记忆架构** — 效果媲美向量数据库，却分文不花。
+Most AI agents suffer from **memory amnesia**:
 
-### ✨ 核心特性
+- ❌ Can't remember what you discussed yesterday
+- ❌ Loads entire memory files, burning tokens
+- ❌ Fuzzy search returns irrelevant results
+- ❌ No structure, just raw text dumps
+- ❌ Waits for user to trigger recall, never proactively remembers
 
-| 特性 | 说明 |
-|------|------|
-| **🏷️ 标签精准定位** | 每个记忆都打标签，按标签搜而不是按关键词 |
-| **🔄 双向自动同步** | 写一次，索引自动更新 |
-| **🎯 零Token浪费** | 只读需要的，一字节都不多余 |
-| **⚡ 毫秒级召回** | 无需向量嵌入，无需API，零延迟 |
-| **🧬 自我修复** | 即使上下文压缩后，索引依然保持一致 |
+**You deserve better.**
 
 ---
 
-## 三大支柱
+## The Solution: Memory Master v2.5.1
 
-### 1. 🏷️ 标签架构
+A **precision-targeted memory architecture** with optional network learning capability.
 
-**像专业图书馆一样组织你的记忆：**
+### ✨ Key Features
 
+| Feature | Description |
+|---------|-------------|
+| **📝 Structured Memory** | "Cause → Change → Todo" format for every entry |
+| **🔄 Auto Index Sync** | Write once, index updates automatically |
+| **🎯 Zero Token Waste** | Read only what you need, nothing more |
+| **⚡ Heuristic Recall** | Proactively finds relevant memories when context is missing |
+| **🧠 Auto Learning** | When local knowledge is insufficient, automatically search web to learn and update knowledge base |
+| **🔓 Full Control** | All files visible/editable/deletable. No auto network calls. |
+
+---
+
+## The Memory Format
+
+### Daily Memory: `memory/daily/YYYY-MM-DD.md`
+
+**Format:**
 ```markdown
-## 学习 #openclaw #memory #学习
-- 两层记忆系统
-- 自动刷新机制
-
-## 项目 #项目 #电商
-- 电商网站 → 03-02
-- 飞书配置 → 03-02
+## [日期] 主题
+- 因：原因/背景
+- 改：做了什么、改了什么
+- 待：待办/后续
 ```
 
-**标签就是记忆的GPS坐标。**
-
----
-
-### 2. 🔄 双向索引同步
-
-**每次写入自动更新索引：**
-
-1. 你写入 `memory/2026-03-03.md`
-2. 系统自动提取标签
-3. `memory-index.md` 同步更新
-4. **零额外工作**
-
-**索引随时ready，永远最新，永远同步。**
-
----
-
-### 3. 🎯 精准召回协议
-
-**用户问起时：**
-
-```
-用户：那个电商项目咋样了？
-
-1. 查询 memory-index.md
-2. 定位：电商 → 03-02, 03-03
-3. 只读 #电商 标签的段落
-4. 返回精准答案
-```
-
-**再也不用_dump整个文件。再也不浪费Token。**
-
----
-
-## 记忆文件结构
-
-### 每日记忆：memory/YYYY-MM-DD.md
-
+**Example:**
 ```markdown
-# 2026-03-03
-
-## 主题名称 #标签1 #标签2
-- 要点1
-- 要点2
-
-## 另一个主题 #标签3
-- 详情
+## [2026-03-03] 记忆系统升级
+- 因：原记忆目录混乱，查找困难
+- 改：目录调整为 daily/ + knowledge/，上传 v1.1.0
+- 待：检查 ClawHub 描述
 ```
 
-### 索引：memory-index.md
+**Why this format?**
+- 一目了然 (一目了然 = instantly clear at a glance)
+- 逻辑清晰：因 → 改 → 待
+- 通用模板，适用于任何场景
 
+---
+
+## The Index Format
+
+### Index: `memory/daily-index.md`
+
+**Format:**
 ```markdown
 # 记忆索引
 
-## 项目
-- 电商网站 → 03-02, 03-03
-- 飞书配置 → 03-02
+- 主题名 → daily/日期.md,日期.md
+```
 
-## 学习
-- Memory系统 → 03-03
-- OpenClaw基础 → 03-03
+**Example:**
+```markdown
+# 记忆索引
+
+- 记忆系统升级 → daily/2026-03-03.md
+- 飞书配置 → daily/2026-03-02.md,daily/2026-03-03.md
+- 电商网站 → daily/2026-03-02.md
+```
+
+**Rules:**
+- 逗号分隔多天
+- 只有一个一级标题：记忆索引
+- 简洁清晰，一眼定位
+
+---
+
+## Heuristic Recall Protocol
+
+### When to Trigger Recall
+
+** DON'T wait for user to say "yesterday" or "remember"**
+
+Trigger recall when:
+1. User mentions a topic you don't have context for
+2. Current conversation references something past
+3. You feel "I'm not sure I have this information"
+4. User asks about "that", "the project", "the skill"
+
+### Recall Flow
+
+```
+用户问题 → 发现上下文缺失 → 读 index 定位主题 → 读取记忆文件 → 恢复上下文 → 回答
+```
+
+**Example:**
+```
+User: "那个 skill 你觉得还有什么要改的吗？"
+
+1. 思考：我知道用户指哪个 skill 吗？→ 不知道，上下文没有
+2. 读 index → 找到"记忆系统升级 → daily/2026-03-03.md"
+3. 读取文件 → 恢复记忆
+4. 回答："根据昨天记录，我们..."
+```
+
+### Key Principle
+
+**"When you realize you don't know, go check the index."**
+
+---
+
+## Knowledge Base System
+
+### Knowledge Structure
+
+```
+memory/knowledge/
+├── knowledge-index.md
+└── *.md (knowledge entries)
+```
+
+### Knowledge Index: `memory/knowledge-index.md`
+
+**极简格式 - 关键字列表：**
+```markdown
+# 知识库索引
+
+- clawhub
+- oauth
+- react
+```
+
+### When to Read Knowledge Base
+
+**启发式：当前上下文没有相关信息时才读**
+
+- 上下文有 → 直接用
+- 上下文没有 → 搜索引 → 读知识库文件 → 执行
+
+### Problem Solving Flow
+
+```
+用户问题 → 上下文有？→ 有：直接解决 / 无：搜索引 → 有知识？→ 有：解决 / 无：自动网络搜索学习 → 写知识库 → 更新索引 → 解决问题
+```
+
+**Example:**
+```
+User: "怎么上传 skill 到 ClawHub？"
+
+1. 上下文有 clawhub 信息？→ 有（刚学过）→ 直接回答
+2. 不用读知识库
+
+---
+User: "怎么实现 OAuth？"
+
+1. 上下文有 OAuth 信息？→ 没有
+2. 搜 knowledge-index → 没有 OAuth
+3. 告知用户："我还不会，先去查一下"
+4. 网络搜索学习
+5. 写入 knowledge/oauth.md
+6. 更新 knowledge-index
+7. 开始和用户沟通解决方案
 ```
 
 ---
 
-## 召回流程
+## Write Flow
+
+### When to Write
+
+Write immediately after:
+1. Discussion reaches a conclusion
+2. Decision is made
+3. Action item is assigned
+4. Something important happens
+
+### ⚠️ IMPORTANT: Auto-Trigger Write
+
+**DO NOT wait for user to remind you!**
+
+Write IMMEDIATELY when any of the above happens. This is NOT optional.
+
+### Write Steps
+
+1. **Detect** conclusion/action (automatically, every time)
+2. **Format** using "因-改-待" template
+3. **Write** to `memory/daily/YYYY-MM-DD.md`
+4. **Update** `daily-index.md` (add new topic or append date)
+
+### Update MEMORY.md (if needed)
+
+When writing to MEMORY.md:
+1. Check for duplicate/outdated rules
+2. Merge and clean up
+3. Keep it minimal
+
+### Example
 
 ```
-用户查询 → 索引查找 → 文件定位 → 标签过滤 → 精准回复
-```
+讨论：我们要改进记忆系统，决定把目录分成 daily/ 和 knowledge/
+结论：改完了，今天上传到 GitHub 和 ClawHub
 
-| 步骤 | 操作 |
-|------|------|
-| 1 | 解析用户问题 |
-| 2 | 在索引中查找 → 获取日期 |
-| 3 | 只定位相关文件 |
-| 4 | 按标签过滤 |
-| 5 | 返回精确答案 |
+写入：
+## [2026-03-04] 记忆系统升级
+- 因：原记忆目录混乱，查找困难
+- 改：目录调整为 daily/ + knowledge/，上传 v1.1.0
+- 待：检查 ClawHub 描述
+
+更新索引：
+- 记忆系统升级 → daily/2026-03-03.md,daily/2026-03-04.md
+```
 
 ---
 
-## 写入流程
+## Recall Flow Summary
 
-```
-新记忆 → 标签提取 → 文件写入 → 索引更新 → 同步完成
-```
-
-| 步骤 | 操作 |
-|------|------|
-| 1 | 检测到新记忆条目 |
-| 2 | 从内容中提取标签 |
-| 3 | 写入每日文件 |
-| 4 | 更新索引条目 |
-| 5 | 确认同步 |
+| Step | Action | Trigger |
+|------|--------|---------|
+| 1 | Parse user query | User asks question |
+| 2 | Check: do I have context? | If uncertain |
+| 3 | Read daily-index.md | Context missing |
+| 4 | Locate relevant topic | Found in index |
+| 5 | Read target date file | Know the date |
+| 6 | Restore context | Got info |
+| 7 | Answer user | Complete |
 
 ---
 
-## 对比
+## Knowledge Base Flow Summary
 
-| 指标 | 传统方式 | 记忆大师 |
-|------|---------|---------|
-| 召回精度 | ~30% | ~95% |
-| Token消耗 | 高（整文件） | 接近零（标签段落） |
-| API依赖 | 向量库/OpenAI | 无 |
-| 配置复杂度 | 高 | 零 |
-| 延迟 | 不稳定 | 毫秒级 |
-
----
-
-## 为什么完爆向量搜索
-
-| 向量搜索 | 记忆大师 |
-|---------|---------|
-| "语义相似"（经常不准） | 精确标签匹配 |
-| 需要API Key + 付费 | 零成本 |
-| 嵌入有延迟 | 即时响应 |
-| 黑盒操作 | 完全透明 |
-| 可能返回无关结果 | 精度保证 |
+| Step | Action | Trigger |
+|------|--------|---------|
+| 1 | Parse user query | User asks question |
+| 2 | Search knowledge-index | Always check first |
+| 3 | Found solution? | Yes → Solve / No → Continue |
+| 4 | Tell user "I don't know yet" | No solution |
+| 5 | Search web & learn | Get knowledge |
+| 6 | Write to knowledge/*.md | New knowledge |
+| 7 | Update knowledge-index | Keep index in sync |
+| 8 | Solve the problem | Complete |
 
 ---
 
-## 记忆存在哪里？
-
-**无需配置！** OpenClaw 本身就有这个结构：
+## File Structure
 
 ```
 ~/.openclaw/workspace/
-├── AGENTS.md          # 你的规则
-├── MEMORY.md          # 长期记忆
-├── memory/            # 每日记忆
-│   ├── 2026-03-02.md
-│   └── 2026-03-03.md
-└── memory-index.md    # 你的索引
+├── AGENTS.md              # Your rules
+├── MEMORY.md              # Long-term memory (main session only)
+├── memory/
+│   ├── daily/             # Daily records
+│   │   ├── 2026-03-02.md
+│   │   ├── 2026-03-03.md
+│   │   └── 2026-03-04.md
+│   ├── knowledge/         # Knowledge base
+│   │   ├── react-basics.md
+│   │   └── flask-api.md
+│   ├── daily-index.md     # Daily memory index
+│   └── knowledge-index.md # Knowledge index
 ```
 
-**我们的 Skill 只是加了标签系统 + 索引维护。**
+---
+
+## Comparison
+
+| Metric | Traditional | Memory Master v1.2 |
+|--------|-------------|---------------------|
+| Recall precision | ~30% | ~95% |
+| Token cost per recall | High (full file) | Near zero (targeted) |
+| Proactive recall | ❌ | ✅ (heuristic) |
+| Knowledge learning | ❌ | ✅ |
+| API dependencies | Vector DB / OpenAI | None |
+| Setup complexity | High | Zero |
+| Latency | Variable | Instant |
 
 ---
 
-## 需求
+## Requirements
 
-**零。** 这个Skill只需要纯OpenClaw：
+**None.** This skill works with pure OpenClaw:
 
-- ✅ 已安装OpenClaw
-- ✅ 已配置Workspace
-- ✅ 就这么多！
+- ✅ OpenClaw installed
+- ✅ Workspace configured
+- ✅ That's it!
 
-**无需外部API，无需向量嵌入，无需任何费用。**
+**No external APIs. No embeddings. No costs.**
 
 ---
 
-## 安装
+## Installation
 
+### 1. Install Skill
 ```bash
-# Skill会自动安装到你的workspace
-# 只需使用下面的触发词
+clawdhub install memory-master
+```
+
+### 2. Auto-Initialize (Recommended)
+```bash
+# This will automatically:
+# - Create memory directories
+# - Replace old memory rules in MEMORY.md with memory-master rules
+# - Create index files
+clawdhub init memory-master
+```
+
+Or manually:
+```bash
+# 1. Replace memory rules in MEMORY.md:
+#    - Delete old memory-related sections in your MEMORY.md
+#    - Add memory-master-rules.md content
+
+# 2. Create index files
+cp ~/.agents/skills/memory-master/templates/daily-index.md ~/.openclaw/workspace/memory/daily-index.md
+cp ~/.agents/skills/memory-master/templates/knowledge-index.md ~/.openclaw/workspace/memory/knowledge-index.md
+
+# 3. Create directories
+mkdir ~/.openclaw/workspace/memory/daily
+mkdir ~/.openclaw/workspace/memory/knowledge
+```
+
+# Create daily index
+cp ~/.agents/skills/memory-master/templates/daily-index.md ~/.openclaw/workspace/memory/daily-index.md
+
+# Create knowledge index  
+cp ~/.agents/skills/memory-master/templates/knowledge-index.md ~/.openclaw/workspace/memory/knowledge-index.md
+
+# Create directories
+mkdir ~/.openclaw/workspace/memory/daily
+mkdir ~/.openclaw/workspace/memory/knowledge
 ```
 
 ---
 
-## 触发词
+## ⚠️ Security & Privacy
 
-使用以下词汇激活记忆功能：
+- **100% Local**: All memory/knowledge stored in local workspace files only. Nothing leaves your machine except your initiated web searches.
+- **Auto-Write to Local**: This is a FEATURE — prevents information loss. Same as OpenClaw's native memory system.
+- **Auto Learning**: When local knowledge is insufficient, automatically search web to learn. Writes results to local knowledge base only.
+- **Full Transparency**: All files visible/editable/deletable by user anytime.
+- **Safe**: No data uploaded, only search queries sent to search engines.
+- **User Control**: User explicitly authorizes web searches ("我去查一下", "let me search the web") before any network activity
 
-- "remember"
-- "recall"
-- "what about"
-- "earlier we discussed"
+---
+
+## Triggers
+
+### Memory Recall
+- "that"
 - "上次"
-- "记得"
 - "之前"
-- "那事儿"
-- "那个项目"
+- "昨天"
+- "earlier"
+- Or: when you realize you don't have the context
+
+### Knowledge Learning
+- When you can't find answer in knowledge base
+- User asks something new
+
+### Memory Writing
+- Discussion reaches conclusion
+- Decision made
+- Action assigned
 
 ---
 
-## 详细用法
+## Best Practices
 
-### 写入新记忆
-
-**格式：**
-```markdown
-## 主题名称 #标签1 #标签2
-- 要点1
-- 要点2
-```
-
-**示例：**
-```markdown
-## OpenClaw配置 #openclaw #配置
-- 通过npm安装
-- 配置了MiniMax模型
-- 添加了飞书渠道
-```
-
-### 更新索引
-
-**写完新记忆后，同步更新索引：**
-
-```markdown
-## 学习
-- OpenClaw配置 → 03-03（初始配置）
-```
-
-### 读取记忆
-
-**用户问起时：**
-
-1. 先查 `memory-index.md`
-2. 定位相关日期
-3. 只读带标签的段落
-
-**示例：** "我们配置了什么？"
-- 索引查找："配置" → 03-03
-- 读取：03-03 中 #配置 段落
-- 返回精准答案
+1. **Write immediately** — Don't wait, write right after conclusion
+2. **Keep it brief** — One line per point, but core info preserved
+3. **Use the template** — 因 → 改 → 待
+4. **Update index** — Always sync after writing
+5. **Heuristic recall** — Don't wait for user to trigger
+6. **Learn proactively** — When you don't know, say it and learn
 
 ---
 
-## 使用案例
+## The Memory Master Promise
 
-### 案例1：项目回忆
+> *"An AI agent is only as good as its memory. Give your agent a memory system that never forgets, never wastes, and always delivers exactly what's needed."*
 
-```
-用户：电商项目进展如何？
-
-1. 索引：电商 → 03-02, 03-03
-2. 读取 03-02 的 #电商 段落
-3. 读取 03-03 的 #电商 段落
-4. 合并回答
-```
-
-### 案例2：偏好提醒
-
-```
-用户：我偏好什么联系方式？
-
-1. MEMORY.md 已加载（偏好都在这）
-2. 读取 #偏好 标签段落
-3. 回答：手机用飞书，电脑用Web
-```
-
-### 案例3：学习总结
-
-```
-用户：我们学了什么关于Memory的？
-
-1. 索引：Memory → 03-03
-2. 读取 03-03 的 #memory #学习 段落
-3. 总结要点
-```
-
----
-
-## 进阶技巧
-
-### 1. 嵌套标签
-
-```markdown
-## 电商网站 #项目 #电商 #前端
-## 电商后端 #项目 #电商 #后端
-```
-
-### 2. 交叉引用
-
-```markdown
-## 记忆系统 #memory #学习
-- 学会了标签索引
-- 另见：OpenClaw基础 → 03-03
-```
-
-### 3. 短标签
-
-```markdown
-#oc    → OpenClaw
-#mem   → Memory
-#proj  → Project
-```
-
-### 4. 日期缩写
-
-索引里不用写完整日期：
-```markdown
-## 项目
-- 电商 → 今天, 昨天
-```
-
----
-
-## FAQ
-
-**Q：需要手动更新索引吗？**
-A：是的，但每个新主题只需要一行。Skill会提醒你。
-
-**Q：忘了加标签怎么办？**
-A：可以用关键词搜索。标签是额外精准度。
-
-**Q：之前的记忆能用这个吗？**
-A：可以！只需要给现有段落加标签，不需要重写。
-
-**Q：群聊能用吗？**
-A：不能。MEMORY.md 是私密的，只在主会话加载。详见 AGENTS.md。
-
-**Q：这个和向量搜索有什么区别？**
-A：零成本、即时、精确匹配 vs. 模糊/昂贵。
-
----
-
-## 更新日志
-
-### v1.0.0
-- 首发
-- 标签精准召回
-- 双向索引同步
-- 包含模板
-
----
-
-## 鸣谢
-
-用 ❤️ 为 OpenClaw 社区制作。
-
-**Slogan：** *"记住该记住的，忘记该忘记的。"*
-
-
-1. **每个都打标签** — 每个章节都需要标签
-2. **同步更新索引** — 每次写入都同步
-3. **标签要具体** — `#项目-电商` > `#项目`
-4. **一个主题一个节** — 不要混在一起
-5. **每日文件要小** — 每个 < 2KB
-
----
-
-## 记忆大师宣言
-
-> *"一个AI助手，能记住多少和能学多少一样重要。给你的助手一个不忘事、不浪费、精确回复的记忆系统。"*
-
----
-
-**记忆大师 — 因为"记住一切"和"学到新东西"同样重要。** 🧠⚡
+**Memory Master v1.2.0 — Because remembering everything is just as important as learning something new.** 🧠⚡

@@ -1,140 +1,102 @@
-# 🧠 Memory Master
+# 🧠 Memory Master v2.5.3
 
-**The Professional Memory System for AI Agents**
+**Local Memory System with Structured Indexing and Auto-Learning**
 
 ---
 
 ## What is Memory Master?
 
-Memory Master is a **precision** memory system designed for AI agents. Think of it as a **library catalog system** for your AI's brain — every piece of information is indexed, tagged, and instantly retrievable.
+A memory system for AI agents with **auto-write**, **heuristic recall**, and **auto learning**. Also compatible with self-improving-agent patterns.
 
-It also serves as a **Knowledge Base** for problem-solving and skill management.
+### Core Features
 
-### The Problem
+- 📝 **Structured Memory**: "Cause → Change → Todo" format
+- 🔄 **Auto Index Sync**: Write once, index updates automatically  
+- ⚡ **Heuristic Recall**: Proactively finds relevant memories when context is missing
+- 🧠 **Auto Learning**: When knowledge is insufficient, automatically search web to learn
+- 🎯 **Skill Auto-Record**: When skill completes or errors, automatically record to knowledge base
+- 🔒 **100% Local**: All data stored locally, nothing leaves your machine
+- 🔓 **Transparent**: All files visible/editable/deletable
 
-Traditional AI memory is like a **chaotic warehouse**:
-- ❌ Dumped raw text, impossible to find anything
-- ❌ Expensive vector embeddings that barely work
-- ❌ Token-burning full-file loads on every recall
-- ❌ Zero precision, maximum waste
+---
 
-### The Solution
+## What Can It Do?
 
-Memory Master brings **library science to AI memory**:
+### 1. Auto-Write Memory
+- Automatically records discussions when conclusions are reached
+- Records decisions, action items, important events
+- No need to remind the AI - it writes automatically
 
-```
-📚 Daily Index → daily-index.md    → daily memories  
-📚 Knowledge Index → knowledge-index.md → knowledge base  
-🏷️ Tags         → #tag1 #tag2      → organized content  
-🔍 Search       → Instant retrieval → precision targeting  
-📖 Read         → Minimal tokens    → only what matters  
-```
+### 2. Heuristic Recall
+- When context is missing, proactively searches index to find relevant memories
+- No need for user to say "remember" - AI finds it automatically
 
-### Directory Structure
+### 3. Auto Learning
+- When knowledge is insufficient, automatically searches the web to learn
+- Writes new knowledge to knowledge base for future use
+
+### 4. Skill Auto-Record (Compatible with self-improving-agent)
+- When skill completes: records what was learned
+- When skill errors: records error and solution
+- All written to knowledge base
+
+---
+
+## Directory Structure
 
 ```
 memory/
 ├── daily-index.md        # Memory index
-├── knowledge-index.md    # Knowledge base index
+├── knowledge-index.md    # Knowledge index  
 ├── daily/               # Daily memories
-│   ├── 2026-03-02.md
-│   └── 2026-03-03.md
-└── knowledge/           # Knowledge base (one file per topic)
-    ├── skill-xxx.md
-    └── problem-yyy.md
+│   └── YYYY-MM-DD.md
+└── knowledge/           # Knowledge base
+    └── *.md
 ```
 
 ---
 
-## Why Memory Master?
+## Memory Format
 
-> **Precision. Efficiency. Zero Cost.**
-
-| | | |
-|---|---|---|
-| 🎯 **Precision** | ⚡ **Efficiency** | 💰 **Free** |
-| 95% recall accuracy | <1% token usage | No API keys |
-| Exact tag matching | Read 1KB not 10MB | No embeddings |
-| No hallucinations | Sub-second response | No hidden costs |
-
-### Compared to Vector Search
-
-| Feature | Vector Search | Memory Master |
-|---------|--------------|---------------|
-| Precision | ~30% | **95%** |
-| Latency | 500ms+ | **<10ms** |
-| Cost | $10+/month | **$0** |
-| Setup | Complex | **Zero** |
-| Privacy | Data leaves your machine | **100% local** |
+```
+## [日期] 主题
+- 因：原因/背景
+- 改：做了什么
+- 待：待办
+```
 
 ---
 
-## Key Features
-
-### 🏷️ Precision Tagging
-Every memory is classified with precision tags. No more keyword soup.
-
-### 🔄 Bidirectional Auto-Sync
-Write once, index updates automatically. The system maintains itself.
-
-### 🎯 Surgical Precision Recall
-Read exactly what you need. Burn 1KB instead of 10MB.
-
-### 🛡️ Enterprise-Grade Reliability
-Survives context compaction. Never loses track of what matters.
-
-### 🌐 100% Local & Private
-Your memories stay on your machine. No cloud, no leaks.
-
----
-
-## Perfect For
-
-- 📝 **Developers** who want their AI to remember code decisions
-- 🧪 **Researchers** tracking experiments and findings
-- 📚 **Learners** building knowledge bases
-- 💼 **Professionals** managing complex projects
-- 🤖 **Any AI** that needs reliable memory
-
----
-
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-# 1. Install
-openclaw skills install memory-master
+# Install
+clawdhub install memory-master
 
-# 2. Structure
-memory/
-├── daily-index.md      # Use this for daily memories
-├── knowledge-index.md  # Use this for knowledge base
-├── daily/             # Put daily memories here
-│   └── 2026-03-03.md
-└── knowledge/         # One file per knowledge topic
-    └── my-skill.md
+# Initialize (creates directories and copies rules)
+# See SKILL.md for detailed instructions
 ```
 
 ---
 
-## 📖 Documentation
+## Comparison
 
-For advanced usage, see [SKILL.md](./SKILL.md)
-
-## 📝 Templates
-
-Ready-to-use templates in [`templates/`](./templates/)
-
----
-
-## Contributing
-
-PRs welcome! Let's build the best memory system together.
+| Feature | Traditional Memory | Memory Master |
+|---------|------------------|---------------|
+| Auto-write | ❌ | ✅ |
+| Heuristic recall | ❌ | ✅ |
+| Auto learning | ❌ | ✅ |
+| Skill auto-record | ❌ | ✅ |
+| 100% local | ✅ | ✅ |
 
 ---
 
-## License
+## Rules Summary
 
-MIT — Free forever.
+- Write automatically when discussion reaches conclusion
+- Write automatically when skill completes or errors
+- Learn automatically when knowledge is insufficient
+- Full user control: all files visible/editable/deletable
 
 ---
 
