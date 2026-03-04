@@ -59,7 +59,7 @@ python3 skills/calendar/calendar.py '{"date":"2015-09-10","islunar":1,"islunarmo
 | islunar       | int    | 否   | 是否是阴历，0 表示阳历（默认），1 表示阴历 |
 | islunarmonth  | int    | 否   | 是否是闰月，0 不是（默认），1 为闰月 |
 
-返回结果示例（节选自 [官方文档](https://www.jisuapi.com/api/calendar/)）：
+返回结果示例（节选自 [极速数据文档](https://www.jisuapi.com/api/calendar/)）：
 
 ```json
 {
@@ -126,7 +126,7 @@ python3 skills/calendar/calendar.py holiday
 
 无额外 JSON 参数。
 
-返回结果示例（节选自 [官方文档](https://www.jisuapi.com/api/calendar/)）：
+返回结果示例（节选自 [极速数据文档](https://www.jisuapi.com/api/calendar/)）：
 
 ```json
 {
@@ -140,7 +140,7 @@ python3 skills/calendar/calendar.py holiday
 
 ## 常见错误码
 
-来自 [官方万年历文档](https://www.jisuapi.com/api/calendar/) 的业务错误码：
+来自 [极速数据万年历文档](https://www.jisuapi.com/api/calendar/) 的业务错误码：
 
 | 代号 | 说明     |
 |------|----------|

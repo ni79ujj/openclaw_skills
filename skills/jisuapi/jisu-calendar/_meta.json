@@ -1,11 +1,17 @@
 {
   "owner": "jisuapi",
   "slug": "jisu-calendar",
-  "displayName": "极速数据万年历查询",
+  "displayName": "万年历查询 - Chinese Calendar",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1772518765791,
-    "commit": "https://github.com/openclaw/skills/commit/4e024950d6e9627c935a55064e502d5f17e622b4"
+    "version": "1.0.2",
+    "publishedAt": 1772533761724,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1772518765791,
+      "commit": "https://github.com/openclaw/skills/commit/4e024950d6e9627c935a55064e502d5f17e622b4"
+    }
+  ]
 }
