@@ -3,9 +3,15 @@
   "slug": "skill-governance-balanced",
   "displayName": "OpenClaw Skill Governance (Balanced Dynamic Core Pool)",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1772384335951,
-    "commit": "https://github.com/openclaw/skills/commit/13a03c6fa9f2e8487158ea4c6bcf358d1d27d3a7"
+    "version": "1.0.1",
+    "publishedAt": 1772386679966,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1772384335951,
+      "commit": "https://github.com/openclaw/skills/commit/13a03c6fa9f2e8487158ea4c6bcf358d1d27d3a7"
+    }
+  ]
 }

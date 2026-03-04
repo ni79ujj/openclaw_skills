@@ -18,6 +18,14 @@ Use this skill to control multi-skill side effects with a balanced governance mo
 - Demote `core` skill to `ready` after 3 days without usage
 - Dynamic core cap range: 8 to 14
 
+## Security and privacy
+
+- No outbound network calls are required by this skill.
+- No credential collection or token upload behavior is implemented.
+- Scripts only read/write local workspace files for governance state and evidence.
+- Weekly cleanup is non-destructive by design (status transitions only; no file deletion).
+- Any action beyond local governance must be explicitly added by the operator.
+
 ## Source of truth
 
 - `skill-registry.json`
