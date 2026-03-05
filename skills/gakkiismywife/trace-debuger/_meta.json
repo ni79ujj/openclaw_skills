@@ -3,9 +3,15 @@
   "slug": "trace-debuger",
   "displayName": "Trace Debuger",
   "latest": {
-    "version": "0.1.0",
-    "publishedAt": 1772618567119,
-    "commit": "https://github.com/openclaw/skills/commit/1300cd6484a81c317afcaca8ff397e2e51240872"
+    "version": "0.2.0",
+    "publishedAt": 1772677428910,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "0.1.0",
+      "publishedAt": 1772618567119,
+      "commit": "https://github.com/openclaw/skills/commit/1300cd6484a81c317afcaca8ff397e2e51240872"
+    }
+  ]
 }

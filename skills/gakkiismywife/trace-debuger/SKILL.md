@@ -45,6 +45,8 @@ es_url: <es_url>
 ## Notes
 
 - Keep logs sorted by timestamp ascending.
+- After fetching ES logs, run Codex in repository root (automated via `codex exec` equivalent to TUI paste workflow) with this prompt:
+  - `这是我的日志，请根据日志结合代码帮我排查分析bug，输出bug原因及解决方案,必须保持固定的格式。`
 - If repository is provided, include code-context hints and file matches for suspected bug areas.
 - If repository is not provided, base bug hypotheses on logs + spans only.
 - After analysis in chat workflow: send the generated Markdown file to the user through the chat window, then delete the local Markdown file.

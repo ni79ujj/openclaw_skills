@@ -6,6 +6,7 @@ import os
 import re
 import urllib.error
 import urllib.request
+import subprocess
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -167,29 +168,19 @@ def normalize_es_logs(es_resp: Dict[str, Any]) -> List[Dict[str, Any]]:
     return logs
 
 
-def detect_bug_patterns(logs: List[Dict[str, Any]]) -> Tuple[List[str], List[str]]:
+def parse_codex_sections(codex_result: Optional[str]) -> Tuple[List[str], List[str]]:
     reasons: List[str] = []
-    sugg: List[str] = []
-    text = "\n".join([f"{l.get('level','')} {l.get('msg','')} {l.get('error','')}" for l in logs]).lower()
+    suggestions: List[str] = []
+    if not codex_result:
+        return reasons, suggestions
 
-    if any(k in text for k in ["panic", "nil pointer", "segmentation"]):
-        reasons.append("疑似运行时崩溃（panic/nil pointer）")
-        sugg.append("检查空指针与边界条件；关键路径增加 nil 判空与 recover 保护")
-    if "timeout" in text or "deadline exceeded" in text:
-        reasons.append("存在超时，可能是下游依赖或连接池瓶颈")
-        sugg.append("排查 DB/Redis/HTTP 客户端超时配置、连接池上限与重试退避策略")
-    if "connection refused" in text or "broken pipe" in text:
-        reasons.append("存在连接错误，可能是服务不可达或网络抖动")
-        sugg.append("检查服务可用性、DNS/网络策略，并增加熔断与重试")
-    if "sql" in text and ("slow" in text or "timeout" in text):
-        reasons.append("疑似慢 SQL 或索引不佳")
-        sugg.append("分析慢查询日志，补充索引并优化查询条件")
-
-    if not reasons and logs:
-        reasons.append("日志中未出现明确异常关键词，可能为业务逻辑缺陷或观测盲区")
-        sugg.append("增加结构化错误日志（error code/cause/params），并补齐 span status")
-
-    return reasons, sugg
+    m1 = re.search(r"1\)\s*Bug原因[:：]\s*(.+)", codex_result)
+    m3 = re.search(r"3\)\s*解决方案[:：]\s*(.+)", codex_result)
+    if m1:
+        reasons.append(m1.group(1).strip())
+    if m3:
+        suggestions.append(m3.group(1).strip())
+    return reasons, suggestions
 
 
 def repo_hint_analysis(repo_path: str, logs: List[Dict[str, Any]]) -> List[str]:
@@ -286,6 +277,37 @@ def md_table(headers: List[str], rows: List[List[str]]) -> str:
     return "\n".join(out)
 
 
+def run_codex_analysis(repo_path: str, logs: List[Dict[str, Any]]) -> Tuple[Optional[str], Optional[str]]:
+    if not repo_path or not os.path.isdir(repo_path):
+        return None, "repo_path 不存在，跳过 codex 分析"
+
+    # 控制上下文长度，避免提示词过大
+    picked = logs[:200]
+    payload = "\n".join([json.dumps(l, ensure_ascii=False) for l in picked])
+    prompt = (
+        "这是我的日志，请根据日志结合代码帮我排查分析bug，输出bug原因及解决方案,必须保持固定的格式。\n"
+        "固定格式如下：\n"
+        "1) Bug原因：<...>\n"
+        "2) 证据：<...>\n"
+        "3) 解决方案：<...>\n\n"
+        "日志如下（JSON Lines）：\n" + payload
+    )
+
+    try:
+        p = subprocess.run(
+            ["codex", "exec", prompt],
+            cwd=repo_path,
+            capture_output=True,
+            text=True,
+            timeout=240,
+        )
+        if p.returncode != 0:
+            return None, f"codex 执行失败: rc={p.returncode}, stderr={p.stderr[:500]}"
+        return p.stdout.strip(), None
+    except Exception as e:
+        return None, f"codex 执行异常: {e}"
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="trace_debuger")
     ap.add_argument("--trace-id", required=True)
@@ -347,19 +369,12 @@ def main() -> int:
     if es_raw is not None:
         logs = normalize_es_logs(es_raw)
 
-    # 3) Bug analysis
-    reasons, suggestions = detect_bug_patterns(logs)
+    # 3) Bug analysis（由 Codex 日志+代码联合分析主导）
     code_hints = repo_hint_analysis(args.repo_path, logs) if args.repo_path else []
     caller_context = collect_caller_context(args.repo_path, logs) if args.repo_path else []
 
-    # stronger signal from explicit business error logs
-    for l in logs:
-        msg = str(l.get("msg", "")).lower()
-        err = str(l.get("error", "")).lower()
-        if "something went wrong" in msg or "business" in msg and ("error" in msg or err):
-            reasons.insert(0, "业务逻辑显式返回错误（非基础设施故障）")
-            suggestions.insert(0, "检查业务分支返回条件，避免示例/调试错误直接返回到生产链路")
-            break
+    codex_result, codex_err = run_codex_analysis(args.repo_path, logs) if logs else (None, None)
+    reasons, suggestions = parse_codex_sections(codex_result)
 
     # de-duplicate while preserving order
     reasons = list(dict.fromkeys(reasons))
@@ -449,6 +464,15 @@ def main() -> int:
         lines.append("- 建议补充结构化日志与错误码，提升可观测性。")
     lines.append("")
 
+    lines.append("### Codex 分析结果（日志+代码）")
+    if codex_result:
+        lines.append("```text")
+        lines.append(codex_result)
+        lines.append("```")
+    else:
+        lines.append(f"- Codex 分析未产出结果：{codex_err or 'unknown error'}")
+    lines.append("")
+
     if args.repo_path:
         lines.append("### 代码仓库关联分析")
         lines.append(f"- repo_path: {args.repo_path}")
@@ -475,7 +499,13 @@ def main() -> int:
     p.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     status_out = "FAIL" if status == "FAIL" else "SUCCESS"
+    codex_summary = ""
+    if codex_result:
+        first = codex_result.splitlines()[0].strip()
+        codex_summary = first[:120]
     key_summary = "；".join(reasons[:2]) if reasons else "未发现明确异常关键词，建议继续结合上下游调用与参数排查"
+    if codex_summary:
+        key_summary = f"{key_summary}；Codex: {codex_summary}"
 
     print(f"trace_id: {trace_id}")
     print(f"status: {status_out}")
