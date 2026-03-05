@@ -1,0 +1,11 @@
+{
+  "owner": "upstage-deployment",
+  "slug": "solar-delegation",
+  "displayName": "solar-delegation",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1772617642646,
+    "commit": null
+  },
+  "history": []
+}
